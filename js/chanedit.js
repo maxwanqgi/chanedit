@@ -1,4 +1,11 @@
 
+
+
+var itemArr = [
+	"cctv-1","cctv-2","cctv-3","cctv-4","cctv-5","cctv-6","cctv-7",
+	"cctv-8","cctv-9","cctv-10","cctv-11","cctv-12","cctv-13","cctv-14"
+]
+
 var channels = null;
 var index = 0;
 var isSkip = false;
@@ -6,7 +13,6 @@ var isFavor = false;
 var isMove = false;
 var btnIndex = -1;
 function chanList (div,items) {
-	this.isFocus = true;
 	this.div = div;
 	this.items = items;
 	this.item_height = 50;
@@ -21,10 +27,9 @@ function chanList (div,items) {
  	var numDiv;
  	var nameDiv;
  	var operDiv;
- 	var delBtn;
+ 	var skipBtn;
  	var collBtn;
  	var moveBtn;	
- 	var lockBtn;  //预留
  	var i;
  	//var divTemp;
  	var chanNumber;
@@ -35,7 +40,8 @@ function chanList (div,items) {
 
  		numDiv = document.createElement('div');
  		numDiv.className = 'chan-num';
- 		chanNumber = DVBPlayer.getChannelAttr(this.items[i],'no');
+ 		//chanNumber = DVBPlayer.getChannelAttr(this.items[i],'no');
+ 		chanNumber = i + 1;
  		if(chanNumber < 10) {
  			chanNumber = '00' + chanNumber;
  		} else if(chanNumber >= 10 && chanNumber < 100) {
@@ -47,13 +53,13 @@ function chanList (div,items) {
 
  		nameDiv = document.createElement('div');
  		nameDiv.className = 'chan-name';
- 		nameDiv.innerHTML = DVBPlayer.getChannelAttr(this.items[i],'name')
-
+ 		//nameDiv.innerHTML = DVBPlayer.getChannelAttr(this.items[i],'name')
+		nameDiv.innerHTML = itemArr[i];
  		operDiv = document.createElement('div');
  		operDiv.className = 'chan-oper';
  		
- 		delBtn = document.createElement('div');
- 		delBtn.className = 'skip operate-btn';
+ 		skipBtn = document.createElement('div');
+ 		skipBtn.className = 'skip operate-btn';
 
  		collBtn = document.createElement('div');
 		collBtn.className = 'favor operate-btn';
@@ -61,7 +67,7 @@ function chanList (div,items) {
 		moveBtn = document.createElement('div');
 		moveBtn.className = 'move operate-btn';	
 
-		operDiv.appendChild(delBtn);
+		operDiv.appendChild(skipBtn);
 		operDiv.appendChild(collBtn);
 		operDiv.appendChild(moveBtn);
 		
@@ -79,7 +85,7 @@ function chanList (div,items) {
 chanList.prototype.painterList = function(UpOrDown){
 	var i;
 	var sum;
-	var chanCnt = this.items.length;
+	var chanCnt = this.divLists.length;
 	var nodes = this.divLists;
 	//alert('the length of nodes is   ' + nodes.length)
 	var startY = this.startY;
@@ -108,7 +114,6 @@ chanList.prototype.btnsHide = function(){
 	var i;	
 	var operateBtns = document.getElementsByClassName('chan-oper');
 	var len = operateBtns.length;
-	var position = this.selected - this.displaybase;
 	var timer;
 	for(i = 0;i < len;i++) {
 		operateBtns[i].style.display = "none";
@@ -116,37 +121,20 @@ chanList.prototype.btnsHide = function(){
 	timer = setTimeout(function () {
 		operateBtns[index].style.display = "block";
 	},150)
-	/*if (index == 0 || index == this.items.length -1) {
-		timer = setTimeout(function () {
-			operateBtns[index].style.display = "block";
-		},0)
-	}*/
 };
 //焦点的移动
 chanList.prototype.focusMove = function(){
 	var itemFocu = this.focusDiv;
 	/*itemFocu.style.webkitTransition = 'top 0.3s';
 	itemFocu.style.top = this.item_height * index + 'px';*/
-	
-	var position = this.selected - this.displaybase;
-	//alert('position is   ' + position) //0
-	if (position > -1 && position < this.items.length) {
+	var pos = this.selected - this.displaybase;
+	//alert('pos is   ' + pos) //0
+	if (pos > -1 && pos < this.items.length) {
 		itemFocu.style.webkitTransition = 'top 0.3s';
-		itemFocu.style.top = parseInt(this.startY + position * this.item_height) + 'px';
+		itemFocu.style.top = parseInt(this.startY + pos * this.item_height) + 'px';
 	}
 };
 
-/*chanList.prototype.reset = function () {
-	this.selected = 0;
-	this.displaybase = 0;
-	
-	var i;
-	for (i = 0;i < this.divLists.length;i ++) {
-		this.divLists[i].style.top = this.startY + i * this.item_height + 'px';
-	}
-	this.focusDiv.style.top = this.startY + 'px';
-}
-*/
 //确认键替换按钮的图片
 chanList.prototype.onEnterPress = function(){
 	var operates = this.div.getElementsByClassName('chan-oper');
@@ -185,7 +173,7 @@ chanList.prototype.onEnterPress = function(){
 
 };
 
-//改变频道的顺序
+
 chanList.prototype.changeChanNo = function () {
 	
 }
@@ -200,7 +188,7 @@ chanList.prototype.choiceBtn = function(){
 	operate[btnIndex].style.border = '1px solid red';
 };
 
-chanList.prototype.onKeyDown = function(key){
+chanList.prototype.onKeyEvent = function(key){
 	var sel = this.selected;
 	var channelCount = this.items.length;
 	var focusChan = this.div.getElementsByClassName('chan-item');
@@ -244,8 +232,8 @@ chanList.prototype.onKeyDown = function(key){
 			if (btnIndex != -1) {
 				focusChan[index + 1].getElementsByClassName('operate-btn')[btnIndex].style.border = '';		
 			}
-			btnIndex = -1;
-			return false;
+			btnIndex = -1;	
+			break;
 		case 40:
 			
 			if (channelCount > 0) {
@@ -272,7 +260,8 @@ chanList.prototype.onKeyDown = function(key){
 				focusChan[index -1].getElementsByClassName('operate-btn')[btnIndex].style.border = '';		
 			}
 			btnIndex = -1;
-			return false;
+			
+			break;
 		case 13:
 			this.onEnterPress();
 			break;
@@ -282,7 +271,9 @@ chanList.prototype.onKeyDown = function(key){
 	}
 };
 
-channels = new chanList(document.getElementById('chan_list'),DVBPlayer.getChannelList('tv','skip'));
+//channels = new chanList(document.getElementById('chan_list'),DVBPlayer.getChannelList('tv','skip'));
+
+channels = new chanList(document.getElementById('chan_list'),itemArr);
 
 var operBtn = document.getElementsByClassName('chan-oper')[0];
 operBtn.style.display = 'block';
@@ -293,10 +284,17 @@ function handlekey (event) {
 	var keyCode = event.keyCode;
 	try {
 		// statements
-		channels.onKeyDown(keyCode);
+		channels.onKeyEvent(keyCode);
 	} catch(e) {
 		// statements
-		alert(e +'==');
+		alert(e);
 	}
 	
 }
+
+
+
+/*function changeFavBg () {
+	var favBtns = document.getElementsByClassName('favor');
+}
+*/
