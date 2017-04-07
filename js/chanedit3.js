@@ -5,7 +5,7 @@ function View () {
 	this.displaybase = 0;
 	this.item_height = 50;
 	this.startY = 0;
-	
+	this.divLists = [];
 	this.model = new Model(itemArr);
 	this.ctrl = new Controller(this.model);
 	//this.divList = this.ctrl.chanList;
@@ -15,19 +15,27 @@ View.prototype = {
 	show : function () {
 		var divlists = this.divList;
 		var HEIGHT = this.item_height;
-		//this.setPosition(divlists,HEIGHT);
-		
+		var that = this;
+		this.pushItem();
+		this.setPosition(this.divLists,HEIGHT);
+		//console.log(this.divLists)
 	},
 	
-	render : function () {
-		
+	pushItem : function () {
+		var len = this.model.data.length;
+		var i;
+		var aDiv = null;
+		for (i = 0;i < len;i ++) {
+			aDiv = this.ctrl.getView(this,i).getDiv();
+			this.divLists.push(aDiv)
+		}
 	},
 	
-	getDiv : function () {
-		
+	getDiv : function (elem) {
+		return document.getElementById(elem)
 	},
 	
-	setPostion : function (elems,y) {
+	setPosition : function (elems,y) {
 		var i;
 		for (i = 0;i < elems.length;i++) {
 			elems[i].style.top = i * y + "px";
@@ -134,10 +142,10 @@ function Controller (model) {
 }
 
 Controller.prototype = {
-	getView : function (view,itemView,position) {
-		var div = view.getDiv();
-		var data = this.data[position]
-
+	getView : function (view,position,itemView) {
+		var div = view.getDiv("chan_list");
+		var data = this.model.data[position]
+		//console.log(data)
 		if (!itemView) {
 			var i;
 			itemView = new View();
@@ -165,17 +173,18 @@ Controller.prototype = {
 			itemView.moveDiv = document.createElement("div");
 			itemView.moveDiv.className = "move operate-btn";
 				
-			itemView.operDiv.appendChild(item.skipDiv);
-			itemView.operDiv.appendChild(item.favorDiv);
-			itemView.operDiv.appendChild(item.moveDiv);
+			itemView.operDiv.appendChild(itemView.skipDiv);
+			itemView.operDiv.appendChild(itemView.favorDiv);
+			itemView.operDiv.appendChild(itemView.moveDiv);
 				
-			itemView.chanDiv.appendChild(item.numDiv);
-			itemView.chanDiv.appendChild(item.nameDiv);
-			itemView.chanDiv.appendChild(item.operDiv);
+			itemView.chanDiv.appendChild(itemView.numDiv);
+			itemView.chanDiv.appendChild(itemView.nameDiv);
+			itemView.chanDiv.appendChild(itemView.operDiv);
 			
 			div.appendChild(itemView.chanDiv);
 			
-			item.div = chanDiv;
+			var item = {};
+			item.div = itemView.chanDiv;
 			item.getDiv = function()
 			{
 				return this.div;
@@ -197,7 +206,7 @@ Controller.prototype = {
 			itemView.nameDiv.innerHTML = data.name;
 
 		}
-		
+		//console.log(item)
 		return item;
 	}
 	
@@ -225,13 +234,11 @@ Model.prototype = {
 }
 
 
-/*var model = new Model();
-var listview = new ListView();
-var view = new View(model,listview);
-var controller = new Controller(model,view);
+var view = new View();
+
 
 view.show();
-document.onkeydown = view.onKeyEvent;*/
+document.onkeydown = view.onKeyEvent;
 
 
 
