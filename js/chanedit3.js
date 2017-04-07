@@ -5,27 +5,35 @@ function View () {
 	this.displaybase = 0;
 	this.item_height = 50;
 	this.startY = 0;
-	this.divList = [];
+	
+	this.model = new Model(itemArr);
+	this.ctrl = new Controller(this.model);
+	//this.divList = this.ctrl.chanList;
 }
 
 View.prototype = {
 	show : function () {
 		var divlists = this.divList;
 		var HEIGHT = this.item_height;
-		this.setPosition(divlists,HEIGHT);
+		//this.setPosition(divlists,HEIGHT);
+		
 	},
+	
 	render : function () {
 		
 	},
+	
 	getDiv : function () {
 		
 	},
+	
 	setPostion : function (elems,y) {
 		var i;
 		for (i = 0;i < elems.length;i++) {
 			elems[i].style.top = i * y + "px";
 		}
 	},
+	
 	painterList : function (nodes,UpOrDown) {
 		var i;
 		var sum;
@@ -52,20 +60,32 @@ View.prototype = {
 			}
 		}
 	},
+	
 	btnsHide : function (obj) {
 		var i;
+		var timer = null;
 		for (i = 0;i < obj.length;i++) {
 			obj[i].style.display = "none";
-		}		
-		obj[this.index].style.display = "block";
+		}	
+		timer = setTimeout(function () {
+			obj[this.index].style.display = "block";
+		},150)	
 	},
-	focusMove : function (elem) {
+	
+	focusMove : function (obj) {
 		var pos = this.selected - this.displaybase;
 		if (pos > -1 && pos < 14) {
-			elem.style.webkitTransition = 'top 0.3s';
-			elem.style.top = parseInt(this.startY + pos * this.item_height) + 'px';
+			obj.style.webkitTransition = 'top 0.3s';
+			obj.style.top = parseInt(this.startY + pos * this.item_height) + 'px';
 		}
 	},
+	
+	move:function(t,b,l,r)
+	{
+		var div = this.getDiv();
+		//div.
+	},
+	
 	onkeyEvent : function (key) {
 		
 	}
@@ -73,72 +93,114 @@ View.prototype = {
 }
 
 function ListView () {
-	View.call(this);
+	
 }
-
 ListView.prototype = {
-	setSkipBG : function () {
-		
-	},
-	setFavorBG : function () {
-		
-	},
-	setMoveBG : function () {
-		
-	},
+
 	onEnterPress : function () {
 		
 	},
-	onKeyEvent : function () {
+	
+	onKeyEvent : function (keycode) {
+		var ctrl = this.ctrl;
+		var items = this.items;
+		if(keycode == "UP")
+		{
+			var i = 0;
+			for(i;i < count;count++)
+			
+			{
+				var t,b,l,r;
+				var item = ctrl.getView(this,items[i],i);
+				
+				item.move(t,b,l,r);
+				
+			}
+		}
 		
+		
+		else // keycode to item
+		{
+			var i = this.selected;
+			var item = ctrl.getView(this,items[i],i);
+			item.onKeyEvent(keycode);
+		}
 	}
 }
 
-function Controller (model,view) {
+function Controller (model) {
 	this.model = model;
+	//this.chanList = [];
 }
 
 Controller.prototype = {
 	getView : function (view,itemView,position) {
 		var div = view.getDiv();
+		var data = this.data[position]
+
 		if (!itemView) {
 			var i;
-			var item;
-			for (i = 0;i < item.length;i++) {
-				item.chanDiv = document.createElement('div');
-				item.chanDiv.className = 'chan-item';
+			itemView = new View();
+			
+			itemView.chanDiv = document.createElement('div');
+			itemView.chanDiv.className = 'chan-item';
 				
-				item.numDiv = document.createElement('div');
-				item.numDiv.className = 'chan-num';
-				item.numDiv.innerHTML = item[i].no;
+			itemView.numDiv = document.createElement('div');
+			itemView.numDiv.className = 'chan-num';
+			itemView.numDiv.innerHTML = data.no;
 				
-				item.nameDiv = document.createElement('div');
-				item.nameDiv.className = 'chan-name';
-				item.nameDiv.innerHTML = item[i].name;
+			itemView.nameDiv = document.createElement('div');
+			itemView.nameDiv.className = 'chan-name';
+			itemView.nameDiv.innerHTML = data.name;
 				
-				item.operDiv = document.createElement('div');
-				item.operDiv.className = "chan-oper";
+			itemView.operDiv = document.createElement('div');
+			itemView.operDiv.className = "chan-oper";
+			
+			itemView.skipDiv = document.createElement("div");
+			itemView.skipDiv.className = "skip operate-btn";
 				
-				item.skipDiv = document.createElement("div");
-				item.skipDiv.className = "skip operate-btn";
+			itemView.favorDiv = document.createElement("div");
+			itemView.favorDiv.className = "favor operate-btn";
 				
-				item.favorDiv = document.createElement("div");
-				item.favorDiv.className = "favor operate-btn";
+			itemView.moveDiv = document.createElement("div");
+			itemView.moveDiv.className = "move operate-btn";
 				
-				item.moveDiv = document.createElement("div");
-				item.moveDiv.className = "move operate-btn";
+			itemView.operDiv.appendChild(item.skipDiv);
+			itemView.operDiv.appendChild(item.favorDiv);
+			itemView.operDiv.appendChild(item.moveDiv);
 				
-				item.operDiv.appendChild(item.skipDiv);
-				item.operDiv.appendChild(item.favorDiv);
-				item.operDiv.appendChild(item.moveDiv);
-				
-				item.chanDiv.appendChild(item.numDiv);
-				item.chanDiv.appendChild(item.nameDiv);
-				item.chanDiv.appendChild(item.operDiv);
-				div.appendChild(item.chanDiv);
+			itemView.chanDiv.appendChild(item.numDiv);
+			itemView.chanDiv.appendChild(item.nameDiv);
+			itemView.chanDiv.appendChild(item.operDiv);
+			
+			div.appendChild(itemView.chanDiv);
+			
+			item.div = chanDiv;
+			item.getDiv = function()
+			{
+				return this.div;
 			}
+			
+			item.move = function(t,b,r,l)
+			{
+				var div = this.getDiv();
+			//	div.style.
+			}
+			
+			
+			
 		}
+		else
+		{
+//			var div = itemView.getDiv();
+			itemView.numDiv.innerHTML = data.no;
+			itemView.nameDiv.innerHTML = data.name;
+
+		}
+		
+		return item;
 	}
+	
 	/*setSkipBG : function () {
 		
 	},
@@ -163,12 +225,13 @@ Model.prototype = {
 }
 
 
-var model = new Model();
-/*var listView = new ListView();*/
-var view = new View(model,listView);
+/*var model = new Model();
+var listview = new ListView();
+var view = new View(model,listview);
 var controller = new Controller(model,view);
 
 view.show();
-document.onkeydown = view.onKeyEvent;
+document.onkeydown = view.onKeyEvent;*/
+
 
 

@@ -59,44 +59,13 @@ function View() {
 	
 }
 
-/*function ListView() {
-	View.call(this);
-	this.itemViews = [];
-	this.contoller = {};
-	
-	this.render = function() {
-
-		var i;
-		var count = displayCount;
-		for (i = 0; i < displayCount; i++) {
-			var temp = this.itemViews[i];
-			var item = contoller.getView(this, temp, i);
-			if (temp) {
-				this.itemViews[i] = item;
-			}
-
-			item.setPosition(50);
-			item.setVisible();
-		}
-	};
-
-	this.onKeyEvent = function(keycode) {
-
-		if (a) {
-			item = this.itemViews[this.selected];
-			item.onKeyEvent(keycode);
-		}
-	};
-
-	return this;
-}*/
 
 function Controller(model) {
 	this.model = model;
 	this.index = 0;
 	this.btnIndex = -1;
 	this.selected = 0;
-	this.displaycount = 8;  //页面上最多显示8个节目
+	this.displaycount = 8;  
 	this.displaybase = 0;
 	this.startY = 0;
 	this.item_height = 50;
@@ -105,9 +74,7 @@ function Controller(model) {
 	};
 
 	this.getView = function(view, itemView, position) {
-		//var data = this.model.getData(1);
-		//alert(data)
-		//var div = view.getDiv('chan_list');
+
 		var div = document.getElementById("chan_list")
 		var chanItem = [];
 		if (!itemView) {
