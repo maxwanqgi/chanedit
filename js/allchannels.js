@@ -1,7 +1,7 @@
 
 var itemArr = [
 	{
-		"name":"cctv1",
+		"name":"cctv-1",
 		"no":1,
 		"favor":false,
 		"skip":true
@@ -16,7 +16,7 @@ var itemArr = [
 		"name":"cctv-3",
 		"no":3,
 		"favor":false,
-		"skip":false
+		"skip":true
 	},
 	{
 		"name":"cctv-4",
@@ -34,7 +34,7 @@ var itemArr = [
 		"name":"cctv-6",
 		"no":6,
 		"favor":false,
-		"skip":true
+		"skip":false
 	},
 	{
 		"name":"cctv-7",
@@ -46,7 +46,7 @@ var itemArr = [
 		"name":"cctv-8",
 		"no":8,
 		"favor":false,
-		"skip":false
+		"skip":true
 	},
 	{
 		"name":"cctv-9",
@@ -63,7 +63,7 @@ var itemArr = [
 	{
 		"name":"cctv-11",
 		"no":11,
-		"favor":false,
+		"favor":true,
 		"skip":false
 	},
 	{
@@ -76,7 +76,7 @@ var itemArr = [
 		"name":"cctv-13",
 		"no":13,
 		"favor":false,
-		"skip":false
+		"skip":true
 	},
 	{
 		"name":"陕西卫视",

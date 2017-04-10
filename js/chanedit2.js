@@ -149,6 +149,7 @@ function Controller(model) {
 			}
 		}
 	};
+	
 	this.painterList = function (UpOrDown) {
 		var i;
 		var sum;
