@@ -27,8 +27,8 @@ var itemArr = [
 	{
 		"name":"cctv-5",
 		"no":5,
-		"favor":false,
-		"skip":true
+		"favor":true,
+		"skip":false
 	},
 	{
 		"name":"cctv-6",
