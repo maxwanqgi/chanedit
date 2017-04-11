@@ -18,12 +18,6 @@ function View() {
 		return document.getElementById(elem);
 	};
 	
-	this.show = function() {
-		//ctrl.getView(this);
-		this.setPosition(50);
-		that.ctrl.setFavorBg();
-		that.ctrl.setSkipBg();
-	};
 	
 	this.render = function() {
 		//ctrl.getView(this);
@@ -138,6 +132,7 @@ function Controller(model) {
 		var skipBtns = document.getElementsByClassName('skip');
 		var item = this.model.data;
 		var chans = document.getElementsByClassName('chan-item');
+
 		var j;
 		for (j = 0;j < skipBtns.length;j++) {
 			if (item[j].skip == false) {
@@ -156,6 +151,7 @@ function Controller(model) {
 		var startY = this.startY;
 		
 		var nodes = document.getElementsByClassName('chan-item');
+		console.log(nodes);
 		var chanCnt = nodes.length;
 		//console.log(nodes);
 		if (chanCnt < this.displaycount) {
@@ -167,7 +163,6 @@ function Controller(model) {
 			var base = this.displaybase;
 			for(i = -1;i < sum;i++){
 				nodes[i + base].style.top = (startY + i * this.item_height) + 'px';
-				
 			}
 		} else {
 			startY += (sum - 1) * this.item_height;
@@ -177,6 +172,7 @@ function Controller(model) {
 			}
 		}
 	};
+	
 	this.btnsHide = function () {
 		var i;	
 		var index = this.index;
@@ -253,7 +249,7 @@ function Controller(model) {
 						this.selected = sel;
 						if (this.displaybase + parseInt(this.displaycount / 2) > sel && this.displaybase > 0) {
 							this.displaybase --;
-							this.painterList(false);
+							this.painterList(false);	
 						} else{
 							this.focusMove();
 						}
