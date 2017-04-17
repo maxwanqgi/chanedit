@@ -83,5 +83,41 @@ var itemArr = [
 		"no":14,
 		"favor":true,
 		"skip":false
+	},
+	{
+		"name":"北京",
+		"no":15,
+		"favor":false,
+		"skip":true
+	},
+	{
+		"name":"西安",
+		"no":16,
+		"favor":false,
+		"skip":false
+	},
+	{
+		"name":"......",
+		"no":17,
+		"favor":false,
+		"skip":false
+	},
+	{
+		"name":"wangqi",
+		"no":18,
+		"favor":false,
+		"skip":false
+	},
+	{
+		"name":"浙江",
+		"no":19,
+		"favor":false,
+		"skip":false
+	},
+	{
+		"name":"海数",
+		"no":20,
+		"favor":false,
+		"skip":false
 	}
 ]

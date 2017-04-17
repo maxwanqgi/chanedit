@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:drawable="@drawable/navi_item_focused_bg" android:state_focused="true"/>
-    <item android:drawable="@drawable/navi_item_not_focused"></item>
-
-</selector>

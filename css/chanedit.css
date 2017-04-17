@@ -7,7 +7,7 @@ body {
 	height:720px;
 	font-family: "黑体";
 	color:#FFF;
-	background-image: url(../drawable/mainbg1.jpg);
+	background:url(../images/mainbg1.jpg) no-repeat;
 	overflow: hidden;
 }
 
@@ -40,7 +40,14 @@ body {
 	font-size:24px;
 	line-height: 60px;
 	padding-left: 80px;
-	background:-webkit-linear-gradient(cyan,blue); 
+	position: relative;
+	background:-webkit-linear-gradient(cyan,darkblue); 
+}
+.edit-wraper .edit-tit img{
+	display: block;
+	position: absolute;
+	left:10px;
+	top:-20px;
 }
 #edit_main{
 	width:1000px;
@@ -131,7 +138,7 @@ body {
 	height:50px;
 	position: absolute;
 	z-index: -1;
-	background:-webkit-linear-gradient(cyan,darkblue); 
+	background:-webkit-linear-gradient(cyan,blue); 
 }
 
 
