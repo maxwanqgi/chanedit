@@ -1,9 +1,9 @@
 /**
  * 
  */
+
 function View() {
 	this.div = null;
-	this.index = 0;
 }
 
 View.prototype = {
@@ -51,9 +51,9 @@ View.prototype = {
 	}
 }
 
-function ListView(div, data,itemViewConstructor,focusViewConstructor,controller) {
+function ListView(div,controller,focusViewConstructor) {
 	View.call(this);
-	this.data = data;
+	this.index = 0;
 	this.items = [];
 	this.div = div;
 
@@ -62,14 +62,10 @@ function ListView(div, data,itemViewConstructor,focusViewConstructor,controller)
 	this.displaybase = 0;
 	this.startY = 0;
 	this.item_height = 50;
+		
+	this.focusView = focusViewConstructor ? new focusViewConstructor(this) : new FocusView(this);
+	this.ctrl = controller;
 	
-	this.itemViewConstructor = itemViewConstructor || ItemView;
-	
-	this.focusView = focusViewConstructor ? new focusViewConstructor() : new FocusView();
-	this.ctrl = controller ? new controller(this.itemViewConstructor) : new Controller(this.itemViewConstructor) ;
-	
-	//
-
 	this.needRepaintFocus = true;
 	this.needRepaintItems = true;
 	this.repaintItemsDirect = true; 
@@ -83,7 +79,7 @@ ListView.prototype.setVisible = function(visible) {
 
 }
 
-ListView.prototype.setNeedDescendKeyEvent = function (isDown) {
+ListView.prototype.setDescendKeyEvent = function (isDown) {
 	if (isDown) {
 		this.needDescendKeyEvent = true;
 	} else {
@@ -103,14 +99,15 @@ ListView.prototype.painterList = function(isUp) {
 	var sum;
 	var startY = this.startY;
 	var items = this.items;
-	var len = this.data.length;
+	var ctrl = this.ctrl;
+	var len = ctrl.getCount();
 	sum = len < this.displaycount ? len : this.displaycount;
-//	debugger;
 	if (isUp) {
+		
 		var base = this.displaybase;
 		for (i = base > 0 ? -1 : 0; i < sum; i++) {
-			items[i + base] = this.ctrl.getView(this,items[i + base],i + base);
-			items[i + base].moveTo(startY + i * this.item_height, null, null, null);	
+			items[i + base] = ctrl.getView(this,items[i + base],i + base);
+			items[i + base].moveTo(startY + i * this.item_height, null, null, null);				
 		}
 		
 	} else {
@@ -118,7 +115,7 @@ ListView.prototype.painterList = function(isUp) {
 		startY += (sum - 1) * this.item_height;
 		var bottom = this.displaybase + sum - 1;
 		for (i = bottom > this.displaycount - 2 ? - 1: 0; i < sum; i++) {
-			items[bottom - i] = this.ctrl.getView(this,items[bottom - i],bottom - i);
+			items[bottom - i] = ctrl.getView(this,items[bottom - i],bottom - i);
 			items[bottom - i].moveTo(startY - i * this.item_height, null, null, null);
 		}
 		
@@ -126,11 +123,10 @@ ListView.prototype.painterList = function(isUp) {
 }
 
 ListView.prototype.focusMove = function() {
-	var t = this.index * this.item_height + "px";
 	var pos = this.selected - this.displaybase;
 	if (pos > -1 && pos < 14) {
-	//	this.focusDiv.style.webkitTransition = 'top 0.3s';
-		//this.focusDiv.style.top = parseInt(this.startY + pos * this.item_height) + 'px';
+		//this.focusView.style.webkitTransition = 'top 0.3s';
+		this.focusView.moveTo(parseInt(this.startY + pos * this.item_height))
 	}
 }
 
@@ -152,7 +148,7 @@ ListView.prototype.onKeyEvent = function(keycode) {
 	var ctrl = this.ctrl;
 	var items = this.items;
 	var old_sel = sel;
-	var channelCount = this.data.length;
+	var channelCount = ctrl.getCount();
 	if (keycode == 40) { //down
 		if (channelCount > 0) {
 			sel ++;
@@ -215,12 +211,15 @@ ListView.prototype.onKeyEvent = function(keycode) {
 			this.onItemSelected(this, items[sel], sel, items[old_sel], old_sel);
 		}
 	} else {
+		
 		var item = ctrl.getView(this, items[sel], sel);
 		
 		if (this.needDescendKeyEvent) {
 			
 			item.onKeyEvent(keycode, sel);
-		} else if (keycode == 13) { //enter
+		} 
+		if (keycode == 13) { //enter
+			
 			this.onItemClicked(this, item, sel);
 		}
 	}
@@ -235,15 +234,19 @@ ListView.prototype.onItemSelected = function (listview, itemview_now, postion_no
 }
 
 
-function FocusView () {
+function FocusView (listview,css) {	
 	View.call(this);
-	//this.div = document.getElementById("itemFocus");
+	
+	var div = listview.getDiv(); 
+	var focusDiv = document.createElement("div");
+	focusDiv.id = "itemFocus";
+	this.div = focusDiv;
+	div.appendChild(focusDiv);	
+	
 }
 
 FocusView.prototype = new View();
 	
-
-
 function ItemView() {
 	View.call(this);
 }
@@ -253,37 +256,30 @@ ItemView.prototype.update = function(data) {
 	
 }
 
-function Controller(viewConstructor) {
+function Controller(viewConstructor,data) {
+	this.data = data;
 	this.viewConstructor = viewConstructor;
 }
 
 Controller.prototype = {
 	getView: function(listview, itemview, position) {
 		if (!itemview) {
-			var item = new this.viewConstructor(listview, listview.data[position]);
+			var item = new this.viewConstructor(listview, this.data[position]);
 			itemview = item;
 		} else {
-			itemview.update(listview.data[position]);
+			itemview.update(this.data[position]);
 		}
 		return itemview;
-	}
-}
-
-
-function itemViewConstructor () {
-	
-}
-
-function Model(data) {
-	this.data = data;
-}
-
-Model.prototype = {
-	getItems: function() {
-
 	},
-	getDate: function() {
-
+	
+	getCount: function() {
+		
+		return this.data.length;
+	},
+	
+	getData: function(postion) {
+		return this.data[postion];
 	}
 }
+
 

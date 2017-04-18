@@ -1,49 +1,5 @@
-init_listview();
-
-function init_listview() {
-	
-	//var listview = new ListView(document.getElementById("chan_list"), itemArr,MenuItemView,FocusView,null);
-	var listview = new ListView(document.getElementById("chan_list"), itemArr,null,null,null);
-	//console.log(listview)
-	listview.setNeedDescendKeyEvent(true);
-
-	listview.onItemClicked = function() {
-		// for play	or open page
-	};
-	
-	listview.onItemSelected = function(listview, MenuItemView_now, postion_now, MenuItemView_old, postion_old) {
-		// for play	or open page
-		
-		MenuItemView_now.setFocus(true);
-		MenuItemView_old.setFocus(false);
-		
-		if(MenuItemView_old.moveDiv && MenuItemView_old.moveDiv.isMove)
-		{
-			var temp = this.data[postion_now];
-			this.data[postion_now] = this.data[postion_old];
-			this.data[postion_old] = temp;
-			
-			MenuItemView_now.moveDiv.isMove = true;
-			MenuItemView_old.moveDiv.isMove = false;
-				
-			this.render();
-
-		}
-	};
-	
-	listview.show();
-
-	listview.setFocus(true);
-
-	document.onkeydown = function(e) {
-		var key = e.keyCode;
-		listview.onKeyEvent(key);
-	}
-}
-
-
-function MenuItemView(listview, data) {
-	ItemView.call(this);
+function ChanItemView(listview, data) {
+	View.call(this);
 
 	var div = listview.getDiv(); 
 	var skip = data.skip;
@@ -110,9 +66,9 @@ function MenuItemView(listview, data) {
 	div.appendChild(chanDiv);
 }
 
-MenuItemView.prototype = new ItemView();
+ChanItemView.prototype = new ItemView();
 
-MenuItemView.prototype.choiceBtn = function() { 
+ChanItemView.prototype.choiceBtn = function() { 
 	var operate = this.operBtns;
 	var i;
 	for (i = 0; i < operate.length; i++) {
@@ -121,7 +77,7 @@ MenuItemView.prototype.choiceBtn = function() {
 	operate[this.btnIndex].style.border = "1px solid red";
 }
 
-MenuItemView.prototype.setFocus = function(focus) {
+ChanItemView.prototype.setFocus = function(focus) {
 	if (this.operDiv) {
 		this.operDiv.style.display = focus ? "block" : "none";
 		if (!focus && this.btnIndex != -1) {
@@ -131,7 +87,7 @@ MenuItemView.prototype.setFocus = function(focus) {
 	}	
 }
 
-MenuItemView.prototype.onEnterDown = function(data) {
+ChanItemView.prototype.onEnterDown = function(data) {
 	var btnindex = this.btnIndex;
 	switch (btnindex) {
 		case 0:
@@ -149,7 +105,7 @@ MenuItemView.prototype.onEnterDown = function(data) {
 	}
 }
 
-MenuItemView.prototype.onKeyEvent = function(keycode, index) {
+ChanItemView.prototype.onKeyEvent = function(keycode, index) {
 	switch (keycode) {
 		case 37:
 			if (this.operDiv) {
@@ -158,9 +114,7 @@ MenuItemView.prototype.onKeyEvent = function(keycode, index) {
 					this.btnIndex = 0;
 				}
 				this.choiceBtn();
-			} else {
-				return false;
-			}	
+			} 
 			break;
 		case 39:
 			if (this.operDiv) {
@@ -169,25 +123,20 @@ MenuItemView.prototype.onKeyEvent = function(keycode, index) {
 					this.btnIndex = this.operBtns.length - 1;
 				}
 				this.choiceBtn();
-			} else {
-				return false;
-			}
-			
+			} 
 			break;
 		case 13:
 			if (this.operDiv) {
 				this.onEnterDown(itemArr[index]);
 				this.update(itemArr[index]);
-			} else if (itemArr[index].url) {
-				window.location.href = itemArr[index].url;
-			}
+			} 
 			break;
 		default:
 			break;
 	}
 }
 
-MenuItemView.prototype.update = function(data) {
+ChanItemView.prototype.update = function(data) {
 	if (this.nameDiv) {
 		this.nameDiv.innerHTML = data.name;
 	}
@@ -201,4 +150,45 @@ MenuItemView.prototype.update = function(data) {
 	}
 }
 
+function init_listview() {
+	//var listview = new ListView(document.getElementById("chan_list"), itemArr,ChanItemView,FocusView,null);
+	var ctrl = new Controller(ChanItemView,itemArr);
+	var listview = new ListView(document.getElementById("chan_list"),ctrl,null);
+	
+	listview.setDescendKeyEvent(true);
 
+	listview.onItemClicked = function() {
+		// for play	or open page
+	};
+	
+	listview.onItemSelected = function(listview, ChanItemView_now, postion_now, ChanItemView_old, postion_old) {
+		// for play	or open page
+		
+		ChanItemView_now.setFocus(true);
+		ChanItemView_old.setFocus(false);
+		ctrl.data = itemArr;
+		if(ChanItemView_old.moveDiv.isMove)
+		{
+			var temp = ctrl.data[postion_now];
+			ctrl.data[postion_now] = ctrl.data[postion_old];
+			ctrl.data[postion_old] = temp;
+
+			ChanItemView_now.moveDiv.isMove = true;
+			ChanItemView_old.moveDiv.isMove = false;
+				
+			this.render();
+
+		}
+	};
+	
+	listview.show();
+
+	listview.setFocus(true);
+
+	document.onkeydown = function(e) {
+		var key = e.keyCode;
+		listview.onKeyEvent(key);
+	}
+}
+
+init_listview();

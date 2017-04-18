@@ -1,35 +1,46 @@
-init_listview();
+
+
+function MenuItemView(listview, data) {
+	View.call(this);
+
+	var div = listview.getDiv(); 
+	var skip = data.skip;
+	var favor = data.favor;
+
+	var menuDiv = document.createElement('div');
+	menuDiv.className = 'chan-item';
+	
+	if (data.name) {
+		var nameDiv = document.createElement('div');
+		nameDiv.className = 'chan-name';
+		nameDiv.innerHTML = data.name;
+		menuDiv.appendChild(nameDiv);
+	}
+	
+	this.div = menuDiv;
+	
+	div.appendChild(menuDiv);
+}
+
+MenuItemView.prototype = new ItemView();
+
+MenuItemView.prototype.onEnterDown = function(data) {
+	
+/*	window.location.href = data.url;*/
+}
+
+MenuItemView.prototype.onKeyEvent = function(keycode, index) {
+	
+}
 
 function init_listview() {
+	var ctrl = new Controller(MenuItemView,itemArr);
+	var listview = new ListView(document.getElementById("chan_list"),ctrl,null);
 	
-	//var listview = new ListView(document.getElementById("chan_list"), itemArr,MenuItemView,FocusView,null);
-	var listview = new ListView(document.getElementById("chan_list"), itemArr,null,null,null);
-	listview.setNeedDescendKeyEvent(true);
-
-	listview.onItemClicked = function() {
+	listview.onItemClicked = function(listview,itemview,postion) {
 		// for play	or open page
-	};
-	
-	listview.onItemSelected = function(listview, MenuItemView_now, postion_now, MenuItemView_old, postion_old) {
-		// for play	or open page
-		
-		MenuItemView_now.setFocus(true);
-		MenuItemView_old.setFocus(false);
-		
-		if(MenuItemView_old.moveDiv && MenuItemView_old.moveDiv.isMove)
-		{
-			var temp = this.data[postion_now];
-			this.data[postion_now] = this.data[postion_old];
-			this.data[postion_old] = temp;
-			
-			MenuItemView_now.moveDiv.isMove = true;
-			MenuItemView_old.moveDiv.isMove = false;
-			
-			//this.painterList(isMoving);
-			
-			this.render();
-
-		}
+		ctrl.data = itemArr;
+		window.location.href = ctrl.data[postion].url;
 	};
 	
 	listview.show();
@@ -41,13 +52,4 @@ function init_listview() {
 		listview.onKeyEvent(key);
 	}
 }
-
-function MenuFocusView () {
-	FocusView.call(this);
-	
-	this.focusDiv = document.getElementById("itemFocus");
-}
-
-FocusView.prototype = new FocusView();
-	
-
+init_listview();
